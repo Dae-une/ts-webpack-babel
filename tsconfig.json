@@ -1,0 +1,72 @@
+{
+  "compilerOptions": {
+    "esModuleInterop": true,
+    // 모듈 호출시, ES호환성 관련 옵션
+    // TS에서, 아래의 두 줄의 ES6 코드는 모듈시스템 내부 동작에 의해 모듈이 호출 방식이 같지 않다.
+    // import moment from 'moment';      (=== const moment = require("moment"))
+    // import * as moment from 'moment'; (=== const moment = require("moment").default)
+    // 
+    // 공식적인 호출 방식은 두번째 방법이며, 
+    // 따라서 첫번째 방식으로 호출 할 경우 에러가 발생한다.
+    //
+    // esModuleInterop 옵션 활성화 시, importHelpers 옵션이 활성화되며,
+    // 첫번째 방식으로도 모듈을 호출 할 수 있게 된다.
+    "sourceMap": true,
+    // 내보낸 js파일에 대한 소스맵 파일을 만든다.
+    //Source Map 이란 배포용으로 빌드한 파일과 원본 파일을 서로 연결시켜주는 기능이다.
+    "lib": [
+      "ES2020",
+      "DOM"
+    ],
+    // ts에는 내장 js API (Math 등)에 대한 기본 유형 정의 및 브라우저 환경의 유형 정의 등이 포함되어 있다.
+    // 이러한 유형 정의 set을 어떤 버전으로 이용할 것인지에 대한 설정 옵션
+    //
+    // ts로 최신 문법 작성시 에러가 발생한다면, 해당 문법의 유형 정의를 가지고 있는 버전을 lib 옵션에 추가해야한다.
+    // (ES6를 추가할 시, ES2020과 ES2019를 같이 넣어주는 것이 좋다)
+    "jsx": "react",
+    // JS파일 안의 Jsx 구성을 어떻게 할지 제어하는 설정
+    // .tsx로 시작한 JS파일의 결과에만 영향이 있다.
+    "module": "esnext",
+    // 현 프로그램을 위한 모듈 로더(loader)을 설정하는 옵션
+    "moduleResolution": "Node",
+    "target": "ES6",
+    // 빌드된 결과물이 어떤 런타임 환경에서 실행 가능한지에 대한 설정
+    // default는 es3 이지만, 권장은 ES6이다.
+    // 해당 값을 변경하면, lib 값도 같이 변경된다.
+    "strict": true,
+    // Type을 엄격하게 검사할 것인지 설정하는 옵션 (true 권장)
+    // strict: true라면, strict에 종속되는 옵션들은 전부 true 값을 가진다.
+    "resolveJsonModule": true,
+    //Enable importing .json files
+    "baseUrl": ".",
+    /// 모듈을 import, 또는 require할 시, 절대 경로를 사용을 위한 rootDir 설정 옵션
+    "paths": {
+      "@hooks/*": [
+        "hooks/*"
+      ],
+      "@components/*": [
+        "components/*"
+      ],
+      "@layouts/*": [
+        "layouts/*"
+      ],
+      "@pages/*": [
+        "pages/*"
+      ],
+      "@utils/*": [
+        "utils/*"
+      ],
+      "@typings/*": [
+        "typings/*"
+      ]
+    }
+  },
+  "ts-node": {
+    "compilerOptions": {
+      "module": "commonjs",
+      "moduleResolution": "Node",
+      "target": "es5",
+      "esModuleInterop": true
+    }
+  }
+}
