@@ -2,24 +2,21 @@ import path from "path";
 import ReactRefreshWebpackPlugin from "@pmmmwh/react-refresh-webpack-plugin";
 import webpack, { Configuration as WebpackConfiguration } from "webpack";
 import { Configuration as WebpackDevServerConfiguration } from "webpack-dev-server";
-import ForkTsCheckerWebpackPlugin from "fork-ts-checker-webpack-plugin";
 
 interface Configuration extends WebpackConfiguration {
   devServer?: WebpackDevServerConfiguration;
 }
 
+import ForkTsCheckerWebpackPlugin from "fork-ts-checker-webpack-plugin";
+
 const isDevelopment = process.env.NODE_ENV !== "production";
 
 const config: Configuration = {
-  name: "ts-webpack",
+  name: "ledger",
   mode: isDevelopment ? "development" : "production",
-  devtool: isDevelopment ? "eval" : "hidden-source-map",
+  devtool: !isDevelopment ? "hidden-source-map" : "eval",
   resolve: {
-    extensions: [".js", ".jsx", ".json", ".ts", ".tsx"],
-    alias: {
-      "@hooks": path.resolve(__dirname, "hooks"),
-      "@layouts": path.resolve(__dirname, "layouts"),
-    },
+    extensions: [".js", ".jsx", ".ts", ".tsx", ".json"],
   },
   entry: {
     app: "./client",
@@ -27,21 +24,16 @@ const config: Configuration = {
   module: {
     rules: [
       {
-        test: /\.tsx?&/,
+        test: /\.tsx?$/,
         loader: "babel-loader",
         options: {
           presets: ["@babel/preset-env", "@babel/preset-react", "@babel/preset-typescript"],
-          plugins: [
-            [
-              "@babel/plugin-transform-runtime",
-              {
-                corejs: 3,
-              },
-            ],
-          ],
           env: {
             development: {
-              plugins: [require.resolve("react-refresh/babel")],
+              plugins: [["@emotion/babel-plugin"], require.resolve("react-refresh/babel")],
+            },
+            production: {
+              plugins: ["@emotion/babel-plugin"],
             },
           },
         },
@@ -51,13 +43,24 @@ const config: Configuration = {
         test: /\.css?$/,
         use: ["style-loader", "css-loader"],
       },
+      {
+        test: /\.(png|jpe?g|gif|svg|webp)$/i,
+        use: [
+          {
+            loader: "file-loader",
+            options: {
+              name: "[name].[ext]",
+            },
+          },
+        ],
+      },
     ],
   },
   plugins: [
     new ForkTsCheckerWebpackPlugin({
       async: false,
     }),
-    new webpack.EnvironmentPlugin({ NODE_ENV: isDevelopment ? "development" : "produciton" }),
+    new webpack.EnvironmentPlugin({ NODE_ENV: isDevelopment ? "development" : "production" }),
   ],
   output: {
     path: path.join(__dirname, "dist"),
@@ -65,7 +68,7 @@ const config: Configuration = {
     publicPath: "/dist/",
   },
   devServer: {
-    historyApiFallback: true,
+    historyApiFallback: true, // react router
     port: 3090,
     devMiddleware: { publicPath: "/dist/" },
     static: { directory: path.resolve(__dirname) },
